@@ -11,11 +11,8 @@ CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('Survey Results Analyser')
-survey = SHEET.worksheet('survey')
 
-data = survey.get_all_values()
 
-print(data)
 
 def get_survey_data():
     """
@@ -30,14 +27,17 @@ def get_survey_data():
 
     data_str = input("Enter your data here:\n")
 
-    print(f"The data provided is: {data_str}")
+    survey_data = data_str.split(",")
+    print(f"Survey data split into list: {survey_data}")
+
+    return survey_data
 
 def main():
     """
     Run all program functions.
     """
     get_survey_data()
-    # Other functions will be added here later
+    
 
 print("Welcome to Survey Data Analysis")
 main()
