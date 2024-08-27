@@ -21,14 +21,19 @@ def get_survey_data():
     via the terminal, which must be a string of values separated
     by commas.
     """
-    print("Please enter survey data.")
-    print("Data should be in the format: value1,value2,value3,...,value10")
-    print("Example: 5,Yes,23,Male\n")
+    while True:
+        print("Please enter survey data.")
+        print("Data should be in the format: value1,value2,value3,...,value10")
+        print("Example: 5,Yes,23,Male\n")
 
-    data_str = input("Enter your data here:\n")
+        data_str = input("Enter your data here:\n")
 
-    survey_data = data_str.split(",")
-    print(f"Survey data split into list: {survey_data}")
+        survey_data = data_str.split(",")
+        print(f"Survey data split into list: {survey_data}")
+        
+        if validate_data(survey_data):
+            print("Data is valid!")
+            break 
 
     return survey_data
 
