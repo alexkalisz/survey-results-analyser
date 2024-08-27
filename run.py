@@ -24,7 +24,7 @@ def get_survey_data():
     while True:
         print("Please enter survey data.")
         print("Data should be in the format: value1,value2,value3,...,value10")
-        print("Example: 5,Yes,23,Male\n")
+        print("Example: 2024-08-01 10:50,Female,45,4,Yes,Price,Reasonably priced for what it offers.\n")
 
         data_str = input("Enter your data here:\n")
 
@@ -44,7 +44,7 @@ def validate_data(values):
                 f"Exactly 7 values required, you provided {len(values)}"
             )
         
-        [int(value) for value in values]
+        int(values[3])
 
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
@@ -57,7 +57,7 @@ def main():
     """
     Run all program functions.
     """
-    get_survey_data()
+    data = get_survey_data()
     
 print("Welcome to Survey Data Analysis")
 
