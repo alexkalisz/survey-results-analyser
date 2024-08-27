@@ -38,22 +38,20 @@ def get_survey_data():
     return survey_data
 
 def validate_data(values):
-    """
-    Validates the survey data to ensure it contains the correct number of values
-    and that all necessary fields are provided.
-    """
     try:
-    
-        if len(values) != 7: 
+        if len(values) != 7:
             raise ValueError(
                 f"Exactly 7 values required, you provided {len(values)}"
             )
-            [int(value) for value in values]
+        
+        [int(value) for value in values]
+
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
         return False
 
     return True
+
 
 def main():
     """
