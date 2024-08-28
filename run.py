@@ -74,13 +74,18 @@ def process_survey_data(data):
 def update_worksheet(worksheet_name, data):
     """
     Updates the specified worksheet with the provided data.
+    Clears the existing data in the worksheet before updating.
     """
     print(f"Updating {worksheet_name} worksheet...\n")
     worksheet = SHEET.worksheet(worksheet_name)
+    
+    worksheet.clear()
+
     if isinstance(data, list) and isinstance(data[0], list):
         worksheet.append_rows(data)
     else:
         worksheet.append_row(data)
+    
     print(f"{worksheet_name.capitalize()} worksheet updated successfully.\n")
 
 def fetch_latest_survey_data():
