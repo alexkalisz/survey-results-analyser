@@ -198,11 +198,13 @@ def main():
     monthly_averages = group_data_by_month()
     differences = calculate_monthly_satisfaction_difference(monthly_averages)
     update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()])
-    last_5_entries = get_last_5_entries_survey()
-    
-    # Analyze feature recommendations and write the result to the worksheet
-    recommended_feature = analyze_feature_recommendations(survey_data)
-    update_worksheet("feature_recommendations", [recommended_feature])
+
+last_5_entries = get_last_5_entries_survey()
+   
+
+
+
+
 
 main()
 
