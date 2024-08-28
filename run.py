@@ -66,7 +66,7 @@ def update_worksheet(worksheet_name, data):
     
     # Clear the worksheet only if it's the "monthly_differences" sheet
     if worksheet_name == "monthly_differences":
-        worksheet.batch_clear(['2:{}'.format(worksheet.row_count)])
+         worksheet.batch_clear(['2:{}'.format(worksheet.row_count)])
 
     if isinstance(data, list) and isinstance(data[0], list):
         worksheet.append_rows(data)
