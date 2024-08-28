@@ -154,6 +154,22 @@ def calculate_monthly_satisfaction_difference(monthly_averages):
 
     return differences
 
+def get_last_5_entries_survey():
+    """
+    Collects columns of data from the survey worksheet, collecting
+    the last 5 entries for each relevant column and returns the data
+    as a list of lists.
+    """
+    survey = SHEET.worksheet("survey")
+
+    columns = []
+    for ind in range(1, 7):
+        column = survey.col_values(ind)
+        columns.append(column[-5:])
+
+    return columns
+
+
 
 
 def main():
@@ -168,9 +184,12 @@ def main():
     differences = calculate_monthly_satisfaction_difference(monthly_averages)
     update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()])
 
+last_5_entries = get_last_5_entries_survey()
+   
+
+
+
+
+
 main()
 
-
-
-
-main()
