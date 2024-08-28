@@ -91,12 +91,50 @@ def fetch_latest_survey_data():
     print(f"Latest survey data: {latest_survey_data}")
     return latest_survey_data
 
+def calculate_average_satisfaction():
+    """
+    Calculate the average satisfaction score from the survey data.
+    """
+    print("Calculating average satisfaction...\n")
+    survey_worksheet = SHEET.worksheet("survey").get_all_values()
+    
+    satisfaction_scores = [int(row[3]) for row in survey_worksheet[1:]]  # Skip the header row
+    average_satisfaction = sum(satisfaction_scores) / len(satisfaction_scores)
+    
+    print(f"Average satisfaction score: {average_satisfaction:.2f}")
+    return average_satisfaction
+
+def calculate_satisfaction_trend():
+    """
+    Compare the latest satisfaction score with the previous score
+    and identify if there's an upward or downward trend.
+    """
+    print("Calculating satisfaction trend...\n")
+    survey_worksheet = SHEET.worksheet("survey").get_all_values()
+    
+    latest_score = int(survey_worksheet[-1][3])
+    previous_score = int(survey_worksheet[-2][3])
+    
+    trend = latest_score - previous_score
+    
+    if trend > 0:
+        print(f"Satisfaction is improving by {trend} points.")
+    elif trend < 0:
+        print(f"Satisfaction is declining by {abs(trend)} points.")
+    else:
+        print("Satisfaction is stable.")
+
+    return trend
+
 def main():
     print("Welcome to Survey Data Analysis")
     survey_data = get_survey_data()
     processed_data = process_survey_data(survey_data)
     update_survey_worksheet(processed_data)
     latest_survey_data = fetch_latest_survey_data()
+
+    calculate_average_satisfaction()
+    calculate_satisfaction_trend()
 
 
 
