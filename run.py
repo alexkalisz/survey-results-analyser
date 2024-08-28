@@ -172,11 +172,11 @@ def get_last_5_entries_survey():
 def analyze_feature_recommendations(survey_data):
     print("Analyzing feature recommendations...\n")
     feature_counts = {
-        "Customer Support": 0,
-        "Price": 0,
-        "Functionality": 0,
-        "Ease of Use": 0,
-        "Design": 0
+        "Improve Customer Support": 0,
+        "Improve Price": 0,
+        "Improve Functionality": 0,
+        "Improve Ease of Use": 0,
+        "Improve Design": 0
     }
     for row in survey_data:
         if len(row) < 6:
