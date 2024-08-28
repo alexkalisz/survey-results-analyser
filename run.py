@@ -71,14 +71,17 @@ def process_survey_data(data):
         data[6]   # Comments (string)
     ]
 
-def update_survey_worksheet(data):
+def update_worksheet(worksheet_name, data):
     """
-    Updates the survey worksheet with a new row of data.
+    Updates the specified worksheet with the provided data.
     """
-    print("Updating survey worksheet...\n")
-    survey_worksheet = SHEET.worksheet("survey") 
-    survey_worksheet.append_row(data)
-    print("Survey worksheet updated successfully.\n")
+    print(f"Updating {worksheet_name} worksheet...\n")
+    worksheet = SHEET.worksheet(worksheet_name)
+    if isinstance(data, list) and isinstance(data[0], list):
+        worksheet.append_rows(data)
+    else:
+        worksheet.append_row(data)
+    print(f"{worksheet_name.capitalize()} worksheet updated successfully.\n")
 
 def fetch_latest_survey_data():
     """
@@ -114,19 +117,18 @@ def group_data_by_month():
 
     monthly_data = {}
     
-    for row in survey_worksheet[1:]:  # Skip the header row
-        date_str = row[0]  # Assuming the date is in the first column
+    for row in survey_worksheet[1:]:
+        date_str = row[0]
         date_obj = datetime.datetime.strptime(date_str, "%d/%m/%Y")
         month_year = date_obj.strftime("%Y-%m")
 
-        satisfaction_score = int(row[3])  # Assuming the satisfaction score is in the fourth column
-
+        satisfaction_score = int(row[3])  
         if month_year not in monthly_data:
             monthly_data[month_year] = []
 
         monthly_data[month_year].append(satisfaction_score)
 
-    # Calculate the average satisfaction for each month
+   
     monthly_averages = {month: sum(scores) / len(scores) for month, scores in monthly_data.items()}
 
     print("Monthly averages:", monthly_averages)
@@ -153,16 +155,20 @@ def calculate_monthly_satisfaction_difference(monthly_averages):
     return differences
 
 
+
 def main():
     print("Welcome to Survey Data Analysis")
     survey_data = get_survey_data()
     processed_data = process_survey_data(survey_data)
-    update_survey_worksheet(processed_data)
+    update_worksheet("survey", processed_data) 
     latest_survey_data = fetch_latest_survey_data()
 
     calculate_average_satisfaction()
     monthly_averages = group_data_by_month()
-    calculate_monthly_satisfaction_difference(monthly_averages)
+    differences = calculate_monthly_satisfaction_difference(monthly_averages)
+    update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()])
+
+main()
 
 
 
