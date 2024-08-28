@@ -3,6 +3,7 @@ from google.oauth2.service_account import Credentials
 from io import StringIO
 import csv
 from pprint import pprint
+import datetime
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -104,27 +105,53 @@ def calculate_average_satisfaction():
     print(f"Average satisfaction score: {average_satisfaction:.2f}")
     return average_satisfaction
 
-def calculate_satisfaction_trend():
+def group_data_by_month():
     """
-    Compare the latest satisfaction score with the previous score
-    and identify if there's an upward or downward trend.
+    Groups survey data by month and calculates the average satisfaction for each month.
     """
-    print("Calculating satisfaction trend...\n")
+    print("Grouping data by month...\n")
     survey_worksheet = SHEET.worksheet("survey").get_all_values()
-    
-    latest_score = int(survey_worksheet[-1][3])
-    previous_score = int(survey_worksheet[-2][3])
-    
-    trend = latest_score - previous_score
-    
-    if trend > 0:
-        print(f"Satisfaction is improving by {trend} points.")
-    elif trend < 0:
-        print(f"Satisfaction is declining by {abs(trend)} points.")
-    else:
-        print("Satisfaction is stable.")
 
-    return trend
+    monthly_data = {}
+    
+    for row in survey_worksheet[1:]:  # Skip the header row
+        date_str = row[0]  # Assuming the date is in the first column
+        date_obj = datetime.datetime.strptime(date_str, "%d/%m/%Y")
+        month_year = date_obj.strftime("%Y-%m")
+
+        satisfaction_score = int(row[3])  # Assuming the satisfaction score is in the fourth column
+
+        if month_year not in monthly_data:
+            monthly_data[month_year] = []
+
+        monthly_data[month_year].append(satisfaction_score)
+
+    # Calculate the average satisfaction for each month
+    monthly_averages = {month: sum(scores) / len(scores) for month, scores in monthly_data.items()}
+
+    print("Monthly averages:", monthly_averages)
+    return monthly_averages
+
+def calculate_monthly_satisfaction_difference(monthly_averages):
+    """
+    Calculate the difference in satisfaction between each month.
+    """
+    print("Calculating monthly satisfaction differences...\n")
+    
+    sorted_months = sorted(monthly_averages.keys())
+    differences = {}
+
+    for i in range(1, len(sorted_months)):
+        current_month = sorted_months[i]
+        previous_month = sorted_months[i - 1]
+
+        difference = monthly_averages[current_month] - monthly_averages[previous_month]
+        differences[current_month] = difference
+
+        print(f"Difference between {previous_month} and {current_month}: {difference} points")
+
+    return differences
+
 
 def main():
     print("Welcome to Survey Data Analysis")
@@ -134,7 +161,8 @@ def main():
     latest_survey_data = fetch_latest_survey_data()
 
     calculate_average_satisfaction()
-    calculate_satisfaction_trend()
+    monthly_averages = group_data_by_month()
+    calculate_monthly_satisfaction_difference(monthly_averages)
 
 
 
