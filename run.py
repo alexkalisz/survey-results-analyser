@@ -2,6 +2,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 from io import StringIO
 import csv
+from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -78,14 +79,26 @@ def update_survey_worksheet(data):
     survey_worksheet.append_row(data)
     print("Survey worksheet updated successfully.\n")
 
+def fetch_latest_survey_data():
+    """
+    Fetches the latest survey data entry for analysis.
+    """
+    print("Fetching latest survey data...\n")
+    survey_worksheet = SHEET.worksheet("survey")
+    all_survey_data = survey_worksheet.get_all_values()
+    pprint(all_survey_data)
+    latest_survey_data = all_survey_data[-1]
+    print(f"Latest survey data: {latest_survey_data}")
+    return latest_survey_data
 
 def main():
-    """
-    Run all program functions.
-    """
-    data = get_survey_data()
-    processed_data = process_survey_data(data)
+    print("Welcome to Survey Data Analysis")
+    survey_data = get_survey_data()
+    processed_data = process_survey_data(survey_data)
     update_survey_worksheet(processed_data)
+    latest_survey_data = fetch_latest_survey_data()
 
-print("Welcome to Survey Data Analysis")
+
+
+
 main()
