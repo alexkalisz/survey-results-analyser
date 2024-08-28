@@ -169,27 +169,40 @@ def get_last_5_entries_survey():
 
     return columns
 
-
-
+def analyze_feature_recommendations(survey_data):
+    print("Analyzing feature recommendations...\n")
+    feature_counts = {
+        "Customer Support": 0,
+        "Price": 0,
+        "Functionality": 0,
+        "Ease of Use": 0,
+        "Design": 0
+    }
+    for row in survey_data:
+        if len(row) < 6:
+            print(f"Skipping incomplete row: {row}")
+            continue
+        feature = row[5]
+        if feature in feature_counts:
+            feature_counts[feature] += 1
+    recommended_feature = max(feature_counts, key=feature_counts.get)
+    print(f"Feature to focus on for improvements: {recommended_feature}")
+    return recommended_feature
 
 def main():
-    print("Welcome to Survey Data Analysis")
     survey_data = get_survey_data()
     processed_data = process_survey_data(survey_data)
-    update_worksheet("survey", processed_data) 
+    update_worksheet("survey", processed_data)
     latest_survey_data = fetch_latest_survey_data()
-
     calculate_average_satisfaction()
     monthly_averages = group_data_by_month()
     differences = calculate_monthly_satisfaction_difference(monthly_averages)
     update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()])
-
-last_5_entries = get_last_5_entries_survey()
-   
-
-
-
-
+    last_5_entries = get_last_5_entries_survey()
+    
+    # Analyze feature recommendations and write the result to the worksheet
+    recommended_feature = analyze_feature_recommendations(survey_data)
+    update_worksheet("feature_recommendations", [recommended_feature])
 
 main()
 
