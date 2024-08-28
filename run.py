@@ -2,7 +2,6 @@ import gspread
 from google.oauth2.service_account import Credentials
 from io import StringIO
 import csv
-from pprint import pprint
 import datetime
 
 SCOPE = [
@@ -16,15 +15,7 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('Survey Results Analyser')
 
-
-
 def get_survey_data():
-    """
-    Get survey data input from the user.
-    Run a while loop to collect a valid string of data from the user
-    via the terminal, which must be a string of values separated
-    by commas.
-    """
     while True:
         print("Please enter survey data.")
         print("Data should be in the format: value1,value2,value3,...,value10")
@@ -36,7 +27,6 @@ def get_survey_data():
         reader = csv.reader(f, skipinitialspace=True)
         survey_data = next(reader)
 
-       
         print(f"Survey data split into list: {survey_data}")
         
         if validate_data(survey_data):
@@ -51,8 +41,7 @@ def validate_data(values):
             raise ValueError(
                 f"Exactly 7 values required, you provided {len(values)}"
             )
-        
-        int(values[3])
+        int(values[3])  # Ensure that the satisfaction score is an integer
 
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
@@ -72,51 +61,50 @@ def process_survey_data(data):
     ]
 
 def update_worksheet(worksheet_name, data):
-    """
-    Updates the specified worksheet with the provided data.
-    Clears the existing data in the worksheet before updating.
-    """
     print(f"Updating {worksheet_name} worksheet...\n")
     worksheet = SHEET.worksheet(worksheet_name)
     
-    worksheet.clear()
+    # Clear the worksheet only if it's the "monthly_differences" sheet
+    if worksheet_name == "monthly_differences":
+        worksheet.batch_clear(['2:{}'.format(worksheet.row_count)])
 
     if isinstance(data, list) and isinstance(data[0], list):
         worksheet.append_rows(data)
     else:
         worksheet.append_row(data)
-    
+
     print(f"{worksheet_name.capitalize()} worksheet updated successfully.\n")
 
+
 def fetch_latest_survey_data():
-    """
-    Fetches the latest survey data entry for analysis.
-    """
     print("Fetching latest survey data...\n")
     survey_worksheet = SHEET.worksheet("survey")
     all_survey_data = survey_worksheet.get_all_values()
-    pprint(all_survey_data)
     latest_survey_data = all_survey_data[-1]
     print(f"Latest survey data: {latest_survey_data}")
     return latest_survey_data
 
 def calculate_average_satisfaction():
-    """
-    Calculate the average satisfaction score from the survey data.
-    """
     print("Calculating average satisfaction...\n")
     survey_worksheet = SHEET.worksheet("survey").get_all_values()
     
-    satisfaction_scores = [int(row[3]) for row in survey_worksheet[1:]]  # Skip the header row
-    average_satisfaction = sum(satisfaction_scores) / len(satisfaction_scores)
+    satisfaction_scores = []
+    for row in survey_worksheet[1:]:
+        try:
+            score = int(row[3])
+            satisfaction_scores.append(score)
+        except (ValueError, IndexError):
+            print(f"Skipping invalid or missing satisfaction score: {row}")
     
-    print(f"Average satisfaction score: {average_satisfaction:.2f}")
-    return average_satisfaction
+    if satisfaction_scores:
+        average_satisfaction = sum(satisfaction_scores) / len(satisfaction_scores)
+        print(f"Average satisfaction score: {average_satisfaction:.2f}")
+        return average_satisfaction
+    else:
+        print("No valid satisfaction scores found.")
+        return None
 
 def group_data_by_month():
-    """
-    Groups survey data by month and calculates the average satisfaction for each month.
-    """
     print("Grouping data by month...\n")
     survey_worksheet = SHEET.worksheet("survey").get_all_values()
 
@@ -127,22 +115,21 @@ def group_data_by_month():
         date_obj = datetime.datetime.strptime(date_str, "%d/%m/%Y")
         month_year = date_obj.strftime("%Y-%m")
 
-        satisfaction_score = int(row[3])  
+        try:
+            satisfaction_score = int(row[3])
+        except ValueError:
+            continue
+
         if month_year not in monthly_data:
             monthly_data[month_year] = []
 
         monthly_data[month_year].append(satisfaction_score)
 
-   
     monthly_averages = {month: sum(scores) / len(scores) for month, scores in monthly_data.items()}
-
     print("Monthly averages:", monthly_averages)
     return monthly_averages
 
 def calculate_monthly_satisfaction_difference(monthly_averages):
-    """
-    Calculate the difference in satisfaction between each month.
-    """
     print("Calculating monthly satisfaction differences...\n")
     
     sorted_months = sorted(monthly_averages.keys())
@@ -151,20 +138,13 @@ def calculate_monthly_satisfaction_difference(monthly_averages):
     for i in range(1, len(sorted_months)):
         current_month = sorted_months[i]
         previous_month = sorted_months[i - 1]
-
         difference = monthly_averages[current_month] - monthly_averages[previous_month]
         differences[current_month] = difference
-
         print(f"Difference between {previous_month} and {current_month}: {difference} points")
 
     return differences
 
 def get_last_5_entries_survey():
-    """
-    Collects columns of data from the survey worksheet, collecting
-    the last 5 entries for each relevant column and returns the data
-    as a list of lists.
-    """
     survey = SHEET.worksheet("survey")
 
     columns = []
@@ -177,7 +157,6 @@ def get_last_5_entries_survey():
 def analyze_feature_recommendations(survey_data):
     print("Analyzing feature recommendations...\n")
     feature_counts = {
-        "Improve Customer Support": 0,
         "Improve Price": 0,
         "Improve Functionality": 0,
         "Improve Ease of Use": 0,
@@ -194,22 +173,39 @@ def analyze_feature_recommendations(survey_data):
     print(f"Feature to focus on for improvements: {recommended_feature}")
     return recommended_feature
 
+def update_feature_recommendations(recommended_feature):
+    worksheet = SHEET.worksheet("feature_recommendations")
+    existing_recommendations = worksheet.col_values(1)
+    recommendation_text = f"Recommended Improvement: {recommended_feature}"
+
+    if recommendation_text not in existing_recommendations:
+        worksheet.append_row([recommendation_text])
+        print("Feature Recommendations updated successfully.\n")
+    else:
+        print("This recommendation already exists in the worksheet.\n")
+
 def main():
     survey_data = get_survey_data()
     processed_data = process_survey_data(survey_data)
     update_worksheet("survey", processed_data)
+
     latest_survey_data = fetch_latest_survey_data()
-    calculate_average_satisfaction()
-    monthly_averages = group_data_by_month()
-    differences = calculate_monthly_satisfaction_difference(monthly_averages)
-    update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()])
 
-last_5_entries = get_last_5_entries_survey()
-   
+    average_satisfaction = calculate_average_satisfaction()
+    if average_satisfaction is not None:
+        monthly_averages = group_data_by_month()
+        if monthly_averages:
+            differences = calculate_monthly_satisfaction_difference(monthly_averages)
+            if differences:
+                update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()])
+            else:
+                print("No differences to update.")
+        else:
+            print("No monthly averages to calculate.")
+    else:
+        print("No valid satisfaction scores to calculate.")
 
-
-
-
+    recommended_feature = analyze_feature_recommendations(survey_data)
+    update_feature_recommendations(recommended_feature)
 
 main()
-
