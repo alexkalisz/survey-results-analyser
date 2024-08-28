@@ -18,7 +18,7 @@ SHEET = GSPREAD_CLIENT.open('Survey Results Analyser')
 def get_survey_data():
     while True:
         print("Please enter survey data.")
-        print("Data should be in the format: value1,value2,value3,...,value10")
+        print("Data should be in the format: value1,value2,value3,...,value7")
         print("Example: 01/08/2024,Female,45,4,Yes,Price,Reasonably priced for what it offers.\n")
 
         data_str = input("Enter your data here:\n")
