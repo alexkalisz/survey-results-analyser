@@ -1,5 +1,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from io import StringIO
+import csv
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -24,11 +26,15 @@ def get_survey_data():
     while True:
         print("Please enter survey data.")
         print("Data should be in the format: value1,value2,value3,...,value10")
-        print("Example: 2024-08-01,Female,45,4,Yes,Price,Reasonably priced for what it offers.\n")
+        print("Example: 01/08/2024,Female,45,4,Yes,Price,Reasonably priced for what it offers.\n")
 
         data_str = input("Enter your data here:\n")
 
-        survey_data = data_str.split(",")
+        f = StringIO(data_str)
+        reader = csv.reader(f, skipinitialspace=True)
+        survey_data = next(reader)
+
+       
         print(f"Survey data split into list: {survey_data}")
         
         if validate_data(survey_data):
@@ -54,13 +60,23 @@ def validate_data(values):
 
 def process_survey_data(data):
     return [
-        data[0], #string
-        data[1], #string
-        data[2], #string
-        int(data[3]), #integear
-        data[4], #string
-        data[5], #string
-        data[5], #string
+        data[0],  # Timestamp (string)
+        data[1],  # Gender (string)
+        data[2],  # Age Group (string)
+        int(data[3]),  # Satisfaction (integer)
+        data[4],  # Recommend (string)
+        data[5],  # Favorite Feature (string)
+        data[6]   # Comments (string)
+    ]
+
+def update_survey_worksheet(data):
+    """
+    Updates the survey worksheet with a new row of data.
+    """
+    print("Updating survey worksheet...\n")
+    survey_worksheet = SHEET.worksheet("survey") 
+    survey_worksheet.append_row(data)
+    print("Survey worksheet updated successfully.\n")
 
 
 def main():
@@ -68,7 +84,8 @@ def main():
     Run all program functions.
     """
     data = get_survey_data()
-    
-print("Welcome to Survey Data Analysis")
+    processed_data = process_survey_data(data)
+    update_survey_worksheet(processed_data)
 
+print("Welcome to Survey Data Analysis")
 main()
