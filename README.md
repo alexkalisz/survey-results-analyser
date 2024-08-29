@@ -56,7 +56,7 @@ This flow chart provides a high-level overview of how the application operates, 
 ### Feature Improvement Recommendations
 - **Recommendations**: Based on the survey data, the app identifies which features need improvement. These recommendations are added to the "feature_recommendations" worksheet.
 
-  ![Feature recommendation](
+  ![Feature recommendation](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Feature%20recommendation.png)
 
 ### Google Sheets Integration
 - **Data Storage**: All processed data, including survey responses, calculated averages, and feature recommendations, is stored in Google Sheets for easy access and review.
@@ -86,6 +86,8 @@ This flow chart provides a high-level overview of how the application operates, 
 
 ### Validator Testing
 The application code was validated using Code Institute’s Python Linter, ensuring that it adheres to best practices. No errors were found during validation.
+
+  ![Thank you message](
 
 ### Manual Testing
 
@@ -129,7 +131,7 @@ The application code was validated using Code Institute’s Python Linter, ensur
    - Visit [GitHub](https://github.com/) and log in to your account.
 
 2. **Navigate to the Project Repository**:
-   - Go to the repository at [Survey Results Analyser](#). *(Replace with the actual repository URL)*
+   - Go to the repository at [Survey Results Analyser](https://github.com/alexkalisz/survey-results-analyser).
 
 3. **Copy the Repository Link**:
    - Click the “Code” button and copy your preferred link (either HTTPS or SSH).
@@ -145,7 +147,7 @@ The application code was validated using Code Institute’s Python Linter, ensur
    - Visit [GitHub](https://github.com/) and log in to your account.
 
 2. **Navigate to the Project Repository**:
-   - Go to the repository at [Survey Results Analyser](#). *(Replace with the actual repository URL)*
+   - Go to the repository at [Survey Results Analyser](https://github.com/alexkalisz/survey-results-analyser).
 
 3. **Fork the Repository**:
    - Click the “Fork” button in the top right corner of the page.
@@ -153,10 +155,8 @@ The application code was validated using Code Institute’s Python Linter, ensur
 ## Credits and References
 
 ### API Creation, Encryption Key, and Google Cloud Integration:
-This project utilizes concepts and techniques from the Code Institute: "Love Sandwiches" project.
+This project uses concepts and techniques from the Code Institute: "Love Sandwiches" project.
 
-### README File Guidance:
-Inspiration for this README file was drawn from the README.md of the [Top Trumps project by bmays9](https://github.com/bmays9/top-trumps).
+### References
+Some codes were researched in Stack Overflow, Particular code of the welcome message and feature recommendation data calculation was requested from ChatGPT, open AI.
 
-### Special Thanks:
-A special thank you to my mentor, [Mentor's Name], for their invaluable support and guidance throughout this project.
