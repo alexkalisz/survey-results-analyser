@@ -4,22 +4,28 @@ from io import StringIO
 import csv
 import datetime
 
+# Define the scope of the API access
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
 ]
 
+# Authenticate and connect to Google Sheets
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('Survey Results Analyser')
 
 def get_survey_data():
+    """
+    Ask the user to input survey data.
+    This function will keep asking until valid data is provided.
+    """
     while True:
         print("Please enter survey data.")
-        print("Data should be in the format: Timestamp, Gender,Age,Satisfaction (1-5),Recommend (Yes/No),Favorite Feature,Comments)																		")
-        print("Example:  01/08/2024,Female,45,4,Yes,Price,Reasonably priced for what it offers.\n")
+        print("The data should be in the format: value1,value2,value3,...,value10")
+        print("Example: 01/08/2024,Female,45,4,Yes,Price,Reasonably priced for what it offers.\n")
 
         data_str = input("Enter your data here:\n")
 
@@ -27,21 +33,25 @@ def get_survey_data():
         reader = csv.reader(f, skipinitialspace=True)
         survey_data = next(reader)
 
-        print(f"Survey data split into list: {survey_data}")
+        print(f"Survey data split into a list: {survey_data}")
         
         if validate_data(survey_data):
-            print("Data is valid!")
+            print("The data is valid!")
             break 
 
     return survey_data
 
 def validate_data(values):
+    """
+    Check that the survey data is valid.
+    Ensures there are exactly 7 values and that the satisfaction score is a number.
+    """
     try:
         if len(values) != 7:
             raise ValueError(
-                f"Exactly 7 values required, you provided {len(values)}"
+                f"Exactly 7 values are required, but you provided {len(values)}"
             )
-        int(values[3])  # Ensure that the satisfaction score is an integer
+        int(values[3])  # Check if the satisfaction score is an integer
 
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
@@ -50,34 +60,43 @@ def validate_data(values):
     return True
 
 def process_survey_data(data):
+    """
+    Prepare the survey data for updating the worksheet.
+    Converts the satisfaction score to a number.
+    """
     return [
         data[0],  # Timestamp (string)
         data[1],  # Gender (string)
         data[2],  # Age Group (string)
         int(data[3]),  # Satisfaction (integer)
         data[4],  # Recommend (string)
-        data[5],  # Favorite Feature (string)
+        data[5],  # Favourite Feature (string)
         data[6]   # Comments (string)
     ]
 
-def update_worksheet(worksheet_name, data):
-    print(f"Updating {worksheet_name} worksheet...\n")
+def update_worksheet(worksheet_name, data, clear=False):
+    """
+    Update the specified worksheet with new data.
+    Optionally, clear the worksheet before adding the new data.
+    """
+    print(f"Updating the {worksheet_name} worksheet...\n")
     worksheet = SHEET.worksheet(worksheet_name)
     
-    # Clear the worksheet only if it's the "monthly_differences" sheet
-    if worksheet_name == "monthly_differences":
-         worksheet.batch_clear(['2:{}'.format(worksheet.row_count)])
+    if clear:
+        worksheet.clear()
 
     if isinstance(data, list) and isinstance(data[0], list):
         worksheet.append_rows(data)
     else:
         worksheet.append_row(data)
 
-    print(f"{worksheet_name.capitalize()} worksheet updated successfully.\n")
-
+    print(f"The {worksheet_name.capitalize()} worksheet has been updated successfully.\n")
 
 def fetch_latest_survey_data():
-    print("Fetching latest survey data...\n")
+    """
+    Retrieve the most recent survey data entry.
+    """
+    print("Fetching the latest survey data...\n")
     survey_worksheet = SHEET.worksheet("survey")
     all_survey_data = survey_worksheet.get_all_values()
     latest_survey_data = all_survey_data[-1]
@@ -85,7 +104,11 @@ def fetch_latest_survey_data():
     return latest_survey_data
 
 def calculate_average_satisfaction():
-    print("Calculating average satisfaction...\n")
+    """
+    Work out the average satisfaction score from the survey data.
+    Any invalid or missing satisfaction scores are skipped.
+    """
+    print("Calculating the average satisfaction...\n")
     survey_worksheet = SHEET.worksheet("survey").get_all_values()
     
     satisfaction_scores = []
@@ -105,31 +128,38 @@ def calculate_average_satisfaction():
         return None
 
 def group_data_by_month():
+    """
+    Organise the survey data by month and calculate the average satisfaction for each month.
+    """
     print("Grouping data by month...\n")
     survey_worksheet = SHEET.worksheet("survey").get_all_values()
 
     monthly_data = {}
     
-    for row in survey_worksheet[1:]:
+    for row in survey_worksheet[1:]:  # Skip the header row
         date_str = row[0]
-        date_obj = datetime.datetime.strptime(date_str, "%d/%m/%Y")
-        month_year = date_obj.strftime("%Y-%m")
-
         try:
+            date_obj = datetime.datetime.strptime(date_str, "%d/%m/%Y")
+            month_year = date_obj.strftime("%Y-%m")
+
             satisfaction_score = int(row[3])
-        except ValueError:
+
+            if month_year not in monthly_data:
+                monthly_data[month_year] = []
+
+            monthly_data[month_year].append(satisfaction_score)
+        except ValueError as e:
+            print(f"Skipping row due to error: {e}")
             continue
-
-        if month_year not in monthly_data:
-            monthly_data[month_year] = []
-
-        monthly_data[month_year].append(satisfaction_score)
 
     monthly_averages = {month: sum(scores) / len(scores) for month, scores in monthly_data.items()}
     print("Monthly averages:", monthly_averages)
     return monthly_averages
 
 def calculate_monthly_satisfaction_difference(monthly_averages):
+    """
+    Work out the difference in satisfaction between consecutive months.
+    """
     print("Calculating monthly satisfaction differences...\n")
     
     sorted_months = sorted(monthly_averages.keys())
@@ -144,50 +174,41 @@ def calculate_monthly_satisfaction_difference(monthly_averages):
 
     return differences
 
-def get_last_5_entries_survey():
-    survey = SHEET.worksheet("survey")
-
-    columns = []
-    for ind in range(1, 7):
-        column = survey.col_values(ind)
-        columns.append(column[-5:])
-
-    return columns
-
-def analyze_feature_recommendations(survey_data):
-    print("Analyzing feature recommendations...\n")
-    feature_counts = {
-        "Improve Price": 0,
-        "Improve Functionality": 0,
-        "Improve Ease of Use": 0,
-        "Improve Design": 0
+def analyze_feature_recommendations():
+    worksheet = SHEET.worksheet("survey")
+    data = worksheet.get_all_values()[1:]  # Get all data excluding the header row
+    
+    feature_recommendations = {
+        "Customer Support": 0,
+        "Price": 0,
+        "Functionality": 0,
+        "Ease of Use": 0,
+        "Design": 0
     }
-    for row in survey_data:
+
+    for row in data:
         if len(row) < 6:
             print(f"Skipping incomplete row: {row}")
             continue
-        feature = row[5]
-        if feature in feature_counts:
-            feature_counts[feature] += 1
-    recommended_feature = max(feature_counts, key=feature_counts.get)
-    print(f"Feature to focus on for improvements: {recommended_feature}")
-    return recommended_feature
 
-def update_feature_recommendations(recommended_feature):
-    worksheet = SHEET.worksheet("feature_recommendations")
-    existing_recommendations = worksheet.col_values(1)
-    recommendation_text = f"Recommended Improvement: {recommended_feature}"
+        recommend = row[4].strip().lower()
+        favourite_feature = row[5].strip()
 
-    if recommendation_text not in existing_recommendations:
-        worksheet.append_row([recommendation_text])
-        print("Feature Recommendations updated successfully.\n")
+        if recommend == "no":
+            if favourite_feature in feature_recommendations:
+                feature_recommendations[favourite_feature] += 1
+
+    recommended_feature = max(feature_recommendations, key=feature_recommendations.get)
+
+    if feature_recommendations[recommended_feature] > 0:
+        return f"Recommended Improvement: Improve {recommended_feature}"
     else:
-        print("This recommendation already exists in the worksheet.\n")
+        return None
 
 def main():
     survey_data = get_survey_data()
     processed_data = process_survey_data(survey_data)
-    update_worksheet("survey", processed_data)
+    update_worksheet("survey", processed_data, clear=False) 
 
     latest_survey_data = fetch_latest_survey_data()
 
@@ -197,7 +218,7 @@ def main():
         if monthly_averages:
             differences = calculate_monthly_satisfaction_difference(monthly_averages)
             if differences:
-                update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()])
+                update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()], clear=True)
             else:
                 print("No differences to update.")
         else:
@@ -205,7 +226,16 @@ def main():
     else:
         print("No valid satisfaction scores to calculate.")
 
-    recommended_feature = analyze_feature_recommendations(survey_data)
-    update_feature_recommendations(recommended_feature)
+    recommended_feature = analyze_feature_recommendations()
+
+    if recommended_feature:  
+        update_feature_recommendations(recommended_feature)
+
+def update_feature_recommendations(recommendation_text):
+    worksheet = SHEET.worksheet("feature_recommendations")
+    worksheet.append_row([recommendation_text])
+    print(f"Feature Recommendation added successfully: {recommendation_text}.")
 
 main()
+
+
