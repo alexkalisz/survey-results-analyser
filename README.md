@@ -87,7 +87,7 @@ This flow chart provides a high-level overview of how the application operates, 
 ### Validator Testing
 The application code was validated using Code Institute’s Python Linter, ensuring that it adheres to best practices. No errors were found during validation.
 
-  ![Code validation](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Python%20linter.png
+  ![Code validation](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Python%20linter.png)
 
 ### Manual Testing
 
