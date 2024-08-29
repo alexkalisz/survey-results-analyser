@@ -54,7 +54,9 @@ This flow chart provides a high-level overview of how the application operates, 
 
 
 ### Feature Improvement Recommendations
-- **Recommendations**: Based on the survey data, the app identifies which features need improvement. These recommendations are added to the "feature_recommendations" worksheet if not already present.
+- **Recommendations**: Based on the survey data, the app identifies which features need improvement. These recommendations are added to the "feature_recommendations" worksheet.
+
+  ![Feature recommendation](
 
 ### Google Sheets Integration
 - **Data Storage**: All processed data, including survey responses, calculated averages, and feature recommendations, is stored in Google Sheets for easy access and review.
