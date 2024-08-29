@@ -17,6 +17,7 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('Survey Results Analyser')
 
+
 def get_survey_data():
     """
     Ask the user to input survey data.
@@ -24,8 +25,14 @@ def get_survey_data():
     """
     while True:
         print("Please enter survey data.")
-        print("The data should be in the format: value1,value2,value3,...,value10")
-        print("Example: 01/08/2024,Female,45,4,Yes,Price,Reasonably priced for what it offers.\n")
+        print(
+            "The data should be in the format: value1,value2,value3,..."
+            "value7"
+        )
+        print(
+            "Example: 01/08/2024,Female,45,4,Yes,Price,"
+            "Reasonably priced for what it offers.\n"
+        )
 
         data_str = input("Enter your data here:\n")
 
@@ -34,22 +41,24 @@ def get_survey_data():
         survey_data = next(reader)
 
         print(f"Survey data split into a list: {survey_data}")
-        
+
         if validate_data(survey_data):
             print("The data is valid!")
-            break 
+            break
 
     return survey_data
+
 
 def validate_data(values):
     """
     Check that the survey data is valid.
-    Ensures there are exactly 7 values and that the satisfaction score is a number.
+    Ensures there are exactly 7 values and that the satisfaction score
+    is a number.
     """
     try:
         if len(values) != 7:
             raise ValueError(
-                f"Exactly 7 values are required, but you provided {len(values)}"
+                f"Exactly 7 values are required{len(values)}"
             )
         int(values[3])  # Check if the satisfaction score is an integer
 
@@ -58,6 +67,7 @@ def validate_data(values):
         return False
 
     return True
+
 
 def process_survey_data(data):
     """
@@ -74,6 +84,7 @@ def process_survey_data(data):
         data[6]   # Comments (string)
     ]
 
+
 def update_worksheet(worksheet_name, data, clear=False):
     """
     Update the specified worksheet with new data.
@@ -81,7 +92,7 @@ def update_worksheet(worksheet_name, data, clear=False):
     """
     print(f"Updating the {worksheet_name} worksheet...\n")
     worksheet = SHEET.worksheet(worksheet_name)
-    
+
     if clear:
         worksheet.clear()
 
@@ -90,7 +101,11 @@ def update_worksheet(worksheet_name, data, clear=False):
     else:
         worksheet.append_row(data)
 
-    print(f"The {worksheet_name.capitalize()} worksheet has been updated successfully.\n")
+    print(
+        f"The {worksheet_name.capitalize()} worksheet has been updated "
+        "successfully.\n"
+    )
+
 
 def fetch_latest_survey_data():
     """
@@ -103,6 +118,7 @@ def fetch_latest_survey_data():
     print(f"Latest survey data: {latest_survey_data}")
     return latest_survey_data
 
+
 def calculate_average_satisfaction():
     """
     Work out the average satisfaction score from the survey data.
@@ -110,7 +126,7 @@ def calculate_average_satisfaction():
     """
     print("Calculating the average satisfaction...\n")
     survey_worksheet = SHEET.worksheet("survey").get_all_values()
-    
+
     satisfaction_scores = []
     for row in survey_worksheet[1:]:
         try:
@@ -118,24 +134,27 @@ def calculate_average_satisfaction():
             satisfaction_scores.append(score)
         except (ValueError, IndexError):
             print(f"Skipping invalid or missing satisfaction score: {row}")
-    
+
     if satisfaction_scores:
-        average_satisfaction = sum(satisfaction_scores) / len(satisfaction_scores)
+        average_satisfaction = sum(satisfaction_scores) / len(
+            satisfaction_scores)
         print(f"Average satisfaction score: {average_satisfaction:.2f}")
         return average_satisfaction
     else:
         print("No valid satisfaction scores found.")
         return None
 
+
 def group_data_by_month():
     """
-    Organise the survey data by month and calculate the average satisfaction for each month.
+    Organise the survey data by month and calculate the average
+    satisfaction for each month.
     """
     print("Grouping data by month...\n")
     survey_worksheet = SHEET.worksheet("survey").get_all_values()
 
     monthly_data = {}
-    
+
     for row in survey_worksheet[1:]:  # Skip the header row
         date_str = row[0]
         try:
@@ -152,32 +171,42 @@ def group_data_by_month():
             print(f"Skipping row due to error: {e}")
             continue
 
-    monthly_averages = {month: sum(scores) / len(scores) for month, scores in monthly_data.items()}
+    monthly_averages = {
+        month: sum(scores) / len(scores) for month,
+        scores in monthly_data.items()
+    }
     print("Monthly averages:", monthly_averages)
     return monthly_averages
+
 
 def calculate_monthly_satisfaction_difference(monthly_averages):
     """
     Work out the difference in satisfaction between consecutive months.
     """
     print("Calculating monthly satisfaction differences...\n")
-    
+
     sorted_months = sorted(monthly_averages.keys())
     differences = {}
 
     for i in range(1, len(sorted_months)):
         current_month = sorted_months[i]
         previous_month = sorted_months[i - 1]
-        difference = monthly_averages[current_month] - monthly_averages[previous_month]
+        difference = (
+            monthly_averages[current_month] - monthly_averages[previous_month]
+        )
         differences[current_month] = difference
-        print(f"Difference between {previous_month} and {current_month}: {difference} points")
+        print(
+            f"Difference between {previous_month} and {current_month}: "
+            f"{difference} points"
+        )
 
     return differences
 
+
 def analyze_feature_recommendations():
     worksheet = SHEET.worksheet("survey")
-    data = worksheet.get_all_values()[1:]  # Get all data excluding the header row
-    
+    data = worksheet.get_all_values()[1:]
+
     feature_recommendations = {
         "Customer Support": 0,
         "Price": 0,
@@ -198,17 +227,26 @@ def analyze_feature_recommendations():
             if favourite_feature in feature_recommendations:
                 feature_recommendations[favourite_feature] += 1
 
-    recommended_feature = max(feature_recommendations, key=feature_recommendations.get)
+    recommended_feature = max(
+        feature_recommendations, key=feature_recommendations.get
+    )
 
     if feature_recommendations[recommended_feature] > 0:
         return f"Recommended Improvement: Improve {recommended_feature}"
     else:
         return None
 
+
+def update_feature_recommendations(recommendation_text):
+    worksheet = SHEET.worksheet("feature_recommendations")
+    worksheet.append_row([recommendation_text])
+    print(f"Feature Recommendation added successfully: {recommendation_text}.")
+
+
 def main():
     survey_data = get_survey_data()
     processed_data = process_survey_data(survey_data)
-    update_worksheet("survey", processed_data, clear=False) 
+    update_worksheet("survey", processed_data, clear=False)
 
     latest_survey_data = fetch_latest_survey_data()
 
@@ -216,9 +254,14 @@ def main():
     if average_satisfaction is not None:
         monthly_averages = group_data_by_month()
         if monthly_averages:
-            differences = calculate_monthly_satisfaction_difference(monthly_averages)
+            differences = calculate_monthly_satisfaction_difference(
+                monthly_averages)
             if differences:
-                update_worksheet("monthly_differences", [[month, diff] for month, diff in differences.items()], clear=True)
+                update_worksheet(
+                    "monthly_differences",
+                    [[month, diff] for month, diff in differences.items()],
+                    clear=True
+                )
             else:
                 print("No differences to update.")
         else:
@@ -228,14 +271,8 @@ def main():
 
     recommended_feature = analyze_feature_recommendations()
 
-    if recommended_feature:  
+    if recommended_feature:
         update_feature_recommendations(recommended_feature)
 
-def update_feature_recommendations(recommendation_text):
-    worksheet = SHEET.worksheet("feature_recommendations")
-    worksheet.append_row([recommendation_text])
-    print(f"Feature Recommendation added successfully: {recommendation_text}.")
 
 main()
-
-
