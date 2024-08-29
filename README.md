@@ -5,6 +5,11 @@ View the Live App [here](https://survey-results-analyser-1-d3cc473f48c0.herokuap
 
 The **Survey Results Analyser** is a Python-based application designed to streamline the collection, processing, and analysis of survey data. This application integrates with Google Sheets, ensuring that all survey data is securely stored and easily accessible. It allows users to input survey data, calculate monthly satisfaction averages, track trends over time, and generate feature improvement recommendations based on user feedback.
 
+
+
+
+
+
 ## Table of Contents
 - [User Expectations](#user-expectations)
 - [Flow Chart](#flow-chart)
