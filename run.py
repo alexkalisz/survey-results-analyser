@@ -18,16 +18,26 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('Survey Results Analyser')
 
 
+def display_welcome_message():
+    """
+    Display a welcome message with a border and color to make it stand out.
+    """
+    print("\n" + "=" * 50)
+    print("\033[1;32m" + "Welcome to Survey Results Analyser" + "\033[0m")
+    print("=" * 50 + "\n")
+
+
 def get_survey_data():
     """
     Ask the user to input survey data.
     This function will keep asking until valid data is provided.
     """
     while True:
-        print("Please enter survey data.")
+        display_welcome_message()
+        print("Please enter survey data.\n")
         print(
             "The data should be in the format: value1,value2,value3,..."
-            "value7"
+            "value7\n"
         )
         print(
             "Example: 01/08/2024,Female,45,4,Yes,Price,"
@@ -36,9 +46,13 @@ def get_survey_data():
 
         data_str = input("Enter your data here:\n")
 
-        f = StringIO(data_str)
-        reader = csv.reader(f, skipinitialspace=True)
-        survey_data = next(reader)
+        try:
+            f = StringIO(data_str)
+            reader = csv.reader(f, skipinitialspace=True)
+            survey_data = next(reader)
+        except StopIteration:
+            print("Error: No data entered. Please try again.\n")
+            continue
 
         print(f"Survey data split into a list: {survey_data}")
 
@@ -60,7 +74,7 @@ def validate_data(values):
             raise ValueError(
                 f"Exactly 7 values are required{len(values)}"
             )
-        int(values[3])  # Check if the satisfaction score is an integer
+        int(values[3])
 
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
@@ -137,7 +151,8 @@ def calculate_average_satisfaction():
 
     if satisfaction_scores:
         average_satisfaction = sum(satisfaction_scores) / len(
-            satisfaction_scores)
+            satisfaction_scores
+        )
         print(f"Average satisfaction score: {average_satisfaction:.2f}")
         return average_satisfaction
     else:
@@ -232,7 +247,7 @@ def analyze_feature_recommendations():
     )
 
     if feature_recommendations[recommended_feature] > 0:
-        return f"Recommended Improvement: Improve {recommended_feature}"
+        return f"Recommended Improvement: Improve {recommended_feature}\n"
     else:
         return None
 
@@ -241,6 +256,19 @@ def update_feature_recommendations(recommendation_text):
     worksheet = SHEET.worksheet("feature_recommendations")
     worksheet.append_row([recommendation_text])
     print(f"Feature Recommendation added successfully: {recommendation_text}.")
+
+
+def display_thank_you_message():
+    """
+    Display a thank you message to the user after the survey data is processed.
+    """
+    print("=" * 50)
+    print("Thank you for using Survey Results Analyser!")
+    print("=" * 50)
+    print("\nYour responses have been successfully recorded.\n")
+    print("Worksheet has been updated successfully")
+    print("Have a great day!\n")
+    print("=" * 50)
 
 
 def main():
@@ -255,7 +283,8 @@ def main():
         monthly_averages = group_data_by_month()
         if monthly_averages:
             differences = calculate_monthly_satisfaction_difference(
-                monthly_averages)
+                monthly_averages
+            )
             if differences:
                 update_worksheet(
                     "monthly_differences",
@@ -273,6 +302,8 @@ def main():
 
     if recommended_feature:
         update_feature_recommendations(recommended_feature)
+
+    display_thank_you_message()
 
 
 main()
