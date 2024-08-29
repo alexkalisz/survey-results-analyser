@@ -42,6 +42,8 @@ This flow chart provides a high-level overview of how the application operates, 
 ### Start of the App
 - **Welcome Message**: Users are greeted with a friendly welcome message and instructions on how to input their survey data.
 
+  ![Welcome message](
+
 ### Data Validation
 - **Input Validation**: The app checks the validity of survey data upon entry. If any data is incorrect or incomplete, the user is notified immediately and prompted to correct the issue.
 
@@ -56,7 +58,7 @@ This flow chart provides a high-level overview of how the application operates, 
 - **Data Storage**: All processed data, including survey responses, calculated averages, and feature recommendations, is stored in Google Sheets for easy access and review.
 
 ### Final Message
-- **Completion Message**: After processing and updating the data, the app displays a final message confirming the successful completion of the task.
+- **Completion Message**: After processing and updating the data, the app displays a final message confirming the successful completion of the task and thank you message for using services.
 
 ## Technologies Used
 
