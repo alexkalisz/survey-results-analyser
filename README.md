@@ -50,7 +50,7 @@ This flow chart provides a high-level overview of how the application operates, 
 ### Data Processing and Analysis
 - **Data Grouping**: The app groups survey responses by the month they were received, facilitating the calculation of monthly averages.
 - **Monthly Satisfaction Differences**: The app calculates the difference in satisfaction scores between months, allowing users to track trends over time.
--   ![Data updates]()
+-   ![Data updates](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Data%20updates.png)
 
 
 ### Feature Improvement Recommendations
@@ -61,7 +61,7 @@ This flow chart provides a high-level overview of how the application operates, 
 
 ### Final Message
 - **Completion Message**: After processing and updating the data, the app displays a final message confirming the successful completion of the task and thank you message for using services.
-  ![Thank you message]()
+  ![Thank you message](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Thank%20you.png)
 
 
 ## Technologies Used
