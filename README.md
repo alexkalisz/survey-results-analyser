@@ -35,7 +35,7 @@ The application ensures that all survey data is securely stored in Google Sheets
 
 This flow chart provides a high-level overview of how the application operates, showing the flow of data from input to analysis and user interactions throughout the process.
 
-![Flow Chart]([path-to-your-flowchart-image](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Flow%20chart.png)
+![Flow Chart](path-to-your-flowchart-image](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Flow%20chart.png)
 
 ## Features
 
