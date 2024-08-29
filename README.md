@@ -42,7 +42,7 @@ This flow chart provides a high-level overview of how the application operates, 
 ### Start of the App
 - **Welcome Message**: Users are greeted with a friendly welcome message and instructions on how to input their survey data.
 
-  ![Welcome message](
+  ![Welcome message](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Welcome%20message.png)
 
 ### Data Validation
 - **Input Validation**: The app checks the validity of survey data upon entry. If any data is incorrect or incomplete, the user is notified immediately and prompted to correct the issue.
@@ -50,6 +50,8 @@ This flow chart provides a high-level overview of how the application operates, 
 ### Data Processing and Analysis
 - **Data Grouping**: The app groups survey responses by the month they were received, facilitating the calculation of monthly averages.
 - **Monthly Satisfaction Differences**: The app calculates the difference in satisfaction scores between months, allowing users to track trends over time.
+-   ![Data updates]()
+
 
 ### Feature Improvement Recommendations
 - **Recommendations**: Based on the survey data, the app identifies which features need improvement. These recommendations are added to the "feature_recommendations" worksheet if not already present.
@@ -59,6 +61,8 @@ This flow chart provides a high-level overview of how the application operates, 
 
 ### Final Message
 - **Completion Message**: After processing and updating the data, the app displays a final message confirming the successful completion of the task and thank you message for using services.
+  ![Thank you message]()
+
 
 ## Technologies Used
 
@@ -66,7 +70,7 @@ This flow chart provides a high-level overview of how the application operates, 
 - **GitHub**: Platform used for version control, code storage, and collaboration.
 - **Gitpod**: Cloud-based development environment used for coding and testing.
 - **Heroku**: Platform used for deploying and hosting the application online.
-- **LucidCharts**: Tool used for designing flowcharts and diagrams to map out project logic.
+- **Microsoft Powerpoint**: Tool used for designing flowcharts and diagrams to map out project logic.
 - **Google Sheets**: Used to store and manage survey data for the application.
 - **Google Cloud**: Platform for accessing APIs and managing cloud resources.
 
