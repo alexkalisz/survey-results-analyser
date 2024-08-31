@@ -42,7 +42,7 @@ This flow chart provides a high-level overview of how the application operates, 
 ### Start of the App
 - **Welcome Message**: Users are greeted with a friendly welcome message and instructions on how to input their survey data.
 
-  ![Welcome message](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Welcome%20message.png)
+  ![Welcome message](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Welcome.png)
 
 ### Data Validation
 - **Input Validation**: The app checks the validity of survey data upon entry. If any data is incorrect or incomplete, the user is notified immediately and prompted to correct the issue.
