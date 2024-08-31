@@ -42,21 +42,29 @@ This flow chart provides a high-level overview of how the application operates, 
 ### Start of the App
 - **Welcome Message**: Users are greeted with a friendly welcome message and instructions on how to input their survey data.
 
+  ![Welcome message](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Welcome%20message.png)
+
 ### Data Validation
 - **Input Validation**: The app checks the validity of survey data upon entry. If any data is incorrect or incomplete, the user is notified immediately and prompted to correct the issue.
 
 ### Data Processing and Analysis
 - **Data Grouping**: The app groups survey responses by the month they were received, facilitating the calculation of monthly averages.
 - **Monthly Satisfaction Differences**: The app calculates the difference in satisfaction scores between months, allowing users to track trends over time.
+-   ![Data updates](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Monthly%20averages.png)
+
 
 ### Feature Improvement Recommendations
-- **Recommendations**: Based on the survey data, the app identifies which features need improvement. These recommendations are added to the "feature_recommendations" worksheet if not already present.
+- **Recommendations**: Based on the survey data, the app identifies which features need improvement. These recommendations are added to the "feature_recommendations" worksheet.
+
+  ![Feature recommendation](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Feature%20recommendation.png)
 
 ### Google Sheets Integration
 - **Data Storage**: All processed data, including survey responses, calculated averages, and feature recommendations, is stored in Google Sheets for easy access and review.
 
 ### Final Message
-- **Completion Message**: After processing and updating the data, the app displays a final message confirming the successful completion of the task.
+- **Completion Message**: After processing and updating the data, the app displays a final message confirming the successful completion of the task and thank you message for using services.
+  ![Thank you message](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Thank%20you.png)
+
 
 ## Technologies Used
 
@@ -64,7 +72,7 @@ This flow chart provides a high-level overview of how the application operates, 
 - **GitHub**: Platform used for version control, code storage, and collaboration.
 - **Gitpod**: Cloud-based development environment used for coding and testing.
 - **Heroku**: Platform used for deploying and hosting the application online.
-- **LucidCharts**: Tool used for designing flowcharts and diagrams to map out project logic.
+- **Microsoft Powerpoint**: Tool used for designing flowcharts and diagrams to map out project logic.
 - **Google Sheets**: Used to store and manage survey data for the application.
 - **Google Cloud**: Platform for accessing APIs and managing cloud resources.
 
@@ -78,6 +86,8 @@ This flow chart provides a high-level overview of how the application operates, 
 
 ### Validator Testing
 The application code was validated using Code Institute’s Python Linter, ensuring that it adheres to best practices. No errors were found during validation.
+
+  ![Code validation](https://github.com/alexkalisz/survey-results-analyser/blob/main/Images/Python%20linter.png)
 
 ### Manual Testing
 
@@ -121,7 +131,7 @@ The application code was validated using Code Institute’s Python Linter, ensur
    - Visit [GitHub](https://github.com/) and log in to your account.
 
 2. **Navigate to the Project Repository**:
-   - Go to the repository at [Survey Results Analyser](#). *(Replace with the actual repository URL)*
+   - Go to the repository at [Survey Results Analyser](https://github.com/alexkalisz/survey-results-analyser).
 
 3. **Copy the Repository Link**:
    - Click the “Code” button and copy your preferred link (either HTTPS or SSH).
@@ -137,7 +147,7 @@ The application code was validated using Code Institute’s Python Linter, ensur
    - Visit [GitHub](https://github.com/) and log in to your account.
 
 2. **Navigate to the Project Repository**:
-   - Go to the repository at [Survey Results Analyser](#). *(Replace with the actual repository URL)*
+   - Go to the repository at [Survey Results Analyser](https://github.com/alexkalisz/survey-results-analyser).
 
 3. **Fork the Repository**:
    - Click the “Fork” button in the top right corner of the page.
@@ -145,10 +155,8 @@ The application code was validated using Code Institute’s Python Linter, ensur
 ## Credits and References
 
 ### API Creation, Encryption Key, and Google Cloud Integration:
-This project utilizes concepts and techniques from the Code Institute: "Love Sandwiches" project.
+This project uses concepts and techniques from the Code Institute: "Love Sandwiches" project.
 
-### README File Guidance:
-Inspiration for this README file was drawn from the README.md of the [Top Trumps project by bmays9](https://github.com/bmays9/top-trumps).
+### References
+Some codes were researched in Stack Overflow, Particular code of the welcome message and feature recommendation data calculation was requested from ChatGPT, open AI.
 
-### Special Thanks:
-A special thank you to my mentor, [Mentor's Name], for their invaluable support and guidance throughout this project.
